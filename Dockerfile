@@ -4,10 +4,6 @@
 ##########################
 FROM          --platform=$BUILDPLATFORM dubodubonduponey/base:builder                                   AS builder
 
-WORKDIR       /build
-
-ARG           TARGETPLATFORM
-
 ARG           DUBOAMP_VERSION="df38e9f149579bfb2516e159aafaa1f5fefe6a62"
 
 WORKDIR       $GOPATH/src/github.com/dubo-dubon-duponey/homekit-alsa
