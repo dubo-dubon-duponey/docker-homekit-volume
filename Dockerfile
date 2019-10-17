@@ -1,0 +1,58 @@
+##########################
+# Builder custom
+# Custom steps required to build this specific image
+##########################
+FROM          --platform=$BUILDPLATFORM dubodubonduponey/base:builder                                   AS builder
+
+WORKDIR       /build
+
+ARG           TARGETPLATFORM
+
+ARG           DUBOAMP_VERSION="df38e9f149579bfb2516e159aafaa1f5fefe6a62"
+
+WORKDIR       $GOPATH/src/github.com/dubo-dubon-duponey/homekit-alsa
+RUN           git clone https://github.com/dubo-dubon-duponey/homekit-alsa .
+RUN           git checkout $DUBOAMP_VERSION
+
+RUN           arch="${TARGETPLATFORM#*/}"; \
+              env GOOS=linux GOARCH="${arch%/*}" go build -v -ldflags "-s -w" -o dist/homekit-alsa ./cmd/homekit-alsa/main.go
+
+WORKDIR       /dist/bin
+RUN           cp "$GOPATH"/src/github.com/dubo-dubon-duponey/homekit-alsa/dist/homekit-alsa     .
+RUN           chmod 555 ./*
+
+#######################
+# Running image
+#######################
+FROM          dubodubonduponey/base:runtime
+
+USER          root
+
+ARG           DEBIAN_FRONTEND="noninteractive"
+ENV           TERM="xterm" LANG="C.UTF-8" LC_ALL="C.UTF-8"
+RUN           apt-get update              > /dev/null && \
+              apt-get install -y --no-install-recommends \
+                alsa-utils=1.1.8-2          > /dev/null && \
+              apt-get -y autoremove       > /dev/null && \
+              apt-get -y clean            && \
+              rm -rf /var/lib/apt/lists/* && \
+              rm -rf /tmp/*               && \
+              rm -rf /var/tmp/*
+
+USER          dubo-dubon-duponey
+
+# Get relevant bits from builder
+COPY          --from=builder --chown=$BUILD_UID:0 /dist .
+
+ENV           ALSA_CARD=""
+ENV           ALSA_DEVICE=""
+
+ENV           HOMEKIT_NAME="Speak-easy"
+ENV           HOMEKIT_PIN="87654312"
+ENV           HOMEKIT_MANUFACTURER="DuboDubonDuponey"
+ENV           HOMEKIT_SERIAL=""
+ENV           HOMEKIT_MODEL="Acme"
+ENV           HOMEKIT_VERSION="0"
+
+# Default volume for data
+VOLUME        /data
