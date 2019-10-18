@@ -21,8 +21,8 @@ This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-al
     * [✓] multi-stage build with ~~no installed~~ dependencies for the runtime image:
         * alsa-utils
  * observable
-    * [n.a.] ~~healthcheck~~
-    * [n.a.] ~~prometheus endpoint~~
+    * [✓] healthcheck
+    * [  ] ~~prometheus endpoint~~
     * [✓] log to stdout
 
 ## Run

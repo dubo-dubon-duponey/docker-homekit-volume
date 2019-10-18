@@ -13,8 +13,13 @@ RUN           git checkout $DUBOAMP_VERSION
 RUN           arch="${TARGETPLATFORM#*/}"; \
               env GOOS=linux GOARCH="${arch%/*}" go build -v -ldflags "-s -w" -o dist/homekit-alsa ./cmd/homekit-alsa/main.go
 
+COPY          http-client.go cmd/http-client/http-client.go
+RUN           arch="${TARGETPLATFORM#*/}"; \
+              env GOOS=linux GOARCH="${arch%/*}" go build -v -ldflags "-s -w" -o dist/http-client ./cmd/http-client
+
 WORKDIR       /dist/bin
 RUN           cp "$GOPATH"/src/github.com/dubo-dubon-duponey/homekit-alsa/dist/homekit-alsa     .
+RUN           cp "$GOPATH"/src/github.com/dubo-dubon-duponey/homekit-alsa/dist/http-client      .
 RUN           chmod 555 ./*
 
 #######################
@@ -50,5 +55,13 @@ ENV           HOMEKIT_SERIAL=""
 ENV           HOMEKIT_MODEL="Acme"
 ENV           HOMEKIT_VERSION="0"
 
+ENV           PORT="12345"
+
+ENV           HEALTHCHECK_URL=http://127.0.0.1:$PORT/accessories
+
+EXPOSE        $PORT/tcp
+
 # Default volume for data
 VOLUME        /data
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=10s --retries=1 CMD http-client || exit 1

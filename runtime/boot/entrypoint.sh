@@ -16,6 +16,7 @@ args=()
 [ ! "$HOMEKIT_MODEL" ]          || args+=(--model "$HOMEKIT_MODEL")
 [ ! "$HOMEKIT_VERSION" ]        || args+=(--version "$HOMEKIT_VERSION")
 [ ! "$HOMEKIT_PIN" ]            || args+=(--pin "$HOMEKIT_PIN")
+[ ! "$PORT" ]                   || args+=(--port "$PORT")
 
 # Run once configured
 exec homekit-alsa register --data-path=/data/dubo-amp "${args[@]}" "$@"
