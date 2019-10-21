@@ -4,7 +4,7 @@
 ##########################
 FROM          --platform=$BUILDPLATFORM dubodubonduponey/base:builder                                   AS builder
 
-ARG           DUBOAMP_VERSION="9e4881060595394c2375480ca8304590182f0775"
+ARG           DUBOAMP_VERSION="8c384b9494d51f9bef0b0b0437934ead5c035035"
 
 WORKDIR       $GOPATH/src/github.com/dubo-dubon-duponey/homekit-alsa
 RUN           git clone https://github.com/dubo-dubon-duponey/homekit-alsa .
