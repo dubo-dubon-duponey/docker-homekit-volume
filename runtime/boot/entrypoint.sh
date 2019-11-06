@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+set -o errexit -o errtrace -o functrace -o nounset -o pipefail
+
+ALSA_CARD=${ALSA_CARD:-}
+ALSA_DEVICE=${ALSA_DEVICE:-}
+HOMEKIT_NAME=${HOMEKIT_NAME:-}
+HOMEKIT_MANUFACTURER=${HOMEKIT_MANUFACTURER:-}
+HOMEKIT_SERIAL=${HOMEKIT_SERIAL:-}
+HOMEKIT_MODEL=${HOMEKIT_MODEL:-}
+HOMEKIT_VERSION=${HOMEKIT_VERSION:-}
+HOMEKIT_PIN=${HOMEKIT_PIN:-}
+PORT=${PORT:-10042}
 
 # Ensure the data folder is writable
 [ -w "/data" ] || {
