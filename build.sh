@@ -5,5 +5,5 @@ export TITLE="Homekit Alsa Speaker"
 export DESCRIPTION="Control your alsa devices volume with HomeKit"
 export IMAGE_NAME="homekit-alsa"
 
-# shellcheck source=vars.sh
+# shellcheck source=/dev/null
 . "$(cd "$(dirname "${BASH_SOURCE[0]:-$PWD}")" 2>/dev/null 1>&2 && pwd)/helpers.sh"
