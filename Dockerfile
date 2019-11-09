@@ -9,9 +9,7 @@ WORKDIR       $GOPATH/src/github.com/dubo-dubon-duponey/healthcheckers
 RUN           git clone git://github.com/dubo-dubon-duponey/healthcheckers .
 RUN           git checkout $HEALTH_VER
 RUN           arch="${TARGETPLATFORM#*/}"; \
-              env GOOS=linux GOARCH="${arch%/*}" go build -v -ldflags "-s -w" -o /dist/bin/http-health ./cmd/http
-
-RUN           chmod 555 /dist/bin/*
+              env GOOS=linux GOARCH="${arch%/*}" go build -v -ldflags "-s -w" -o /dist/boot/bin/http-health ./cmd/http
 
 ##########################
 # Builder custom
@@ -26,9 +24,10 @@ RUN           git clone https://github.com/dubo-dubon-duponey/homekit-alsa .
 RUN           git checkout $DUBOAMP_VERSION
 
 RUN           arch="${TARGETPLATFORM#*/}"; \
-              env GOOS=linux GOARCH="${arch%/*}" go build -v -ldflags "-s -w" -o /dist/bin/homekit-alsa ./cmd/homekit-alsa/main.go
+              env GOOS=linux GOARCH="${arch%/*}" go build -v -ldflags "-s -w" -o /dist/boot/bin/homekit-alsa ./cmd/homekit-alsa/main.go
 
-RUN           chmod 555 /dist/bin/*
+COPY          --from=builder-healthcheck /dist/boot/bin           /dist/boot/bin
+RUN           chmod 555 /dist/boot/bin/*
 
 #######################
 # Running image
@@ -52,7 +51,6 @@ USER          dubo-dubon-duponey
 
 # Get relevant bits from builder
 COPY          --from=builder --chown=$BUILD_UID:root /dist .
-COPY          --from=builder-healthcheck  /dist/bin/http-health ./bin/
 
 ENV           ALSA_CARD=""
 ENV           ALSA_DEVICE=""
