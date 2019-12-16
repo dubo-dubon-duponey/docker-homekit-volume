@@ -68,6 +68,6 @@ You need to run this in host or macvlan networking (eg: mDNS).
 
 You can rebuild the image using the following build arguments:
 
- * BUILD_UID
+ * `BUILD_UID`
  
 So to control which user-id to assign to the in-container user.
