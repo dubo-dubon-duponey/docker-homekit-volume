@@ -16,14 +16,14 @@ This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-al
     * [x] image runs with no capabilities
     * [x] process runs as a non-root user, disabled login, no shell
  * lightweight
-    * [x] based on `debian:buster-slim`
+    * [x] based on our slim [Debian buster version](https://github.com/dubo-dubon-duponey/docker-debian)
     * [x] simple entrypoint script
     * [ ] multi-stage build with ~~no installed~~ dependencies for the runtime image:
         * alsa-utils
  * observable
     * [x] healthcheck
     * [x] log to stdout
-    * [ ] ~~prometheus endpoint~~
+    * [ ] ~~prometheus endpoint~~ not applicable
 
 ## Run
 
@@ -47,7 +47,6 @@ docker run -d \
 ### Custom configuration file
 
 All configuration is done through environment variables, specifically:
-
 
 ```dockerfile
 ENV           ALSA_CARD=""
