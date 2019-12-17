@@ -7,23 +7,23 @@ This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-al
 ## Image features
 
  * multi-architecture:
-    * [✓] linux/amd64
-    * [✓] linux/arm64
-    * [✓] linux/arm/v7
-    * [✓] linux/arm/v6
+    * [x] linux/amd64
+    * [x] linux/arm64
+    * [x] linux/arm/v7
+    * [x] linux/arm/v6
  * hardened:
-    * [✓] image runs read-only
-    * [✓] image runs with no capabilities
-    * [✓] process runs as a non-root user, disabled login, no shell
+    * [x] image runs read-only
+    * [x] image runs with no capabilities
+    * [x] process runs as a non-root user, disabled login, no shell
  * lightweight
-    * [✓] based on `debian:buster-slim`
-    * [✓] simple entrypoint script
-    * [✓] multi-stage build with ~~no installed~~ dependencies for the runtime image:
+    * [x] based on our slim [Debian buster version](https://github.com/dubo-dubon-duponey/docker-debian)
+    * [x] simple entrypoint script
+    * [ ] multi-stage build with ~~no installed~~ dependencies for the runtime image:
         * alsa-utils
  * observable
-    * [n.a.] ~~healthcheck~~
-    * [n.a.] ~~prometheus endpoint~~
-    * [✓] log to stdout
+    * [x] healthcheck
+    * [x] log to stdout
+    * [ ] ~~prometheus endpoint~~ not applicable
 
 ## Run
 
@@ -48,7 +48,6 @@ docker run -d \
 
 All configuration is done through environment variables, specifically:
 
-
 ```dockerfile
 ENV           ALSA_CARD=""
 ENV           ALSA_DEVICE=""
@@ -69,6 +68,6 @@ You need to run this in host or macvlan networking (eg: mDNS).
 
 You can rebuild the image using the following build arguments:
 
- * BUILD_UID
+ * `BUILD_UID`
  
 So to control which user-id to assign to the in-container user.
