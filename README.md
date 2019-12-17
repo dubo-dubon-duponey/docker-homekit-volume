@@ -64,10 +64,6 @@ ENV           HOMEKIT_VERSION="0"
 
 You need to run this in host or macvlan networking (eg: mDNS).
 
-#### Build time
+## Moar?
 
-You can rebuild the image using the following build arguments:
-
- * `BUILD_UID`
- 
-So to control which user-id to assign to the in-container user.
+See [DEVELOP.md](DEVELOP.md)
