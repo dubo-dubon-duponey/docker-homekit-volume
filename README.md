@@ -44,7 +44,17 @@ docker run -d \
 
 ## Notes
 
-### Custom configuration file
+### Networking
+
+You need to run this in `host` or `mac(or ip)vlan` networking (because of mDNS).
+
+### Additional arguments
+
+Any additional arguments when running the image will get fed to the `homekit-alsa` binary.
+
+Try `--help` for more.
+
+### Custom configuration
 
 All configuration is done through environment variables, specifically:
 
@@ -59,10 +69,6 @@ ENV           HOMEKIT_SERIAL=""
 ENV           HOMEKIT_MODEL="Acme"
 ENV           HOMEKIT_VERSION="0"
 ```
-
-### Networking
-
-You need to run this in host or macvlan networking (eg: mDNS).
 
 ## Moar?
 
