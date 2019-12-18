@@ -28,17 +28,16 @@ This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-al
 ## Run
 
 ```bash
-docker run -d \
+docker run -d --rm \
+    --name "speaker" \
     --env HOMEKIT_NAME="My Fancy Speaker" \
     --env HOMEKIT_PIN="87654312" \
-    --name speaker \
-    --read-only \
-    --cap-drop ALL \
-    --group-add audio \
-    --net host \
-    --device /dev/snd \
     --volume /data \
-    --rm \
+    --group-add audio \
+    --device /dev/snd \
+    --net host \
+    --cap-drop ALL \
+    --read-only \
     dubodubonduponey/homekit-alsa:v1
 ```
 
