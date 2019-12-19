@@ -28,23 +28,32 @@ This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-al
 ## Run
 
 ```bash
-docker run -d \
+docker run -d --rm \
+    --name "speaker" \
     --env HOMEKIT_NAME="My Fancy Speaker" \
     --env HOMEKIT_PIN="87654312" \
-    --name speaker \
-    --read-only \
-    --cap-drop ALL \
-    --group-add audio \
-    --net host \
-    --device /dev/snd \
     --volume /data \
-    --rm \
+    --group-add audio \
+    --device /dev/snd \
+    --net host \
+    --cap-drop ALL \
+    --read-only \
     dubodubonduponey/homekit-alsa:v1
 ```
 
 ## Notes
 
-### Custom configuration file
+### Networking
+
+You need to run this in `host` or `mac(or ip)vlan` networking (because of mDNS).
+
+### Additional arguments
+
+Any additional arguments when running the image will get fed to the `homekit-alsa` binary.
+
+Try `--help` for more.
+
+### Custom configuration
 
 All configuration is done through environment variables, specifically:
 
@@ -60,14 +69,6 @@ ENV           HOMEKIT_MODEL="Acme"
 ENV           HOMEKIT_VERSION="0"
 ```
 
-### Networking
+## Moar?
 
-You need to run this in host or macvlan networking (eg: mDNS).
-
-#### Build time
-
-You can rebuild the image using the following build arguments:
-
- * `BUILD_UID`
- 
-So to control which user-id to assign to the in-container user.
+See [DEVELOP.md](DEVELOP.md)
