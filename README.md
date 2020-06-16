@@ -38,7 +38,7 @@ docker run -d --rm \
     --net host \
     --cap-drop ALL \
     --read-only \
-    dubodubonduponey/homekit-alsa:v1
+    dubodubonduponey/homekit-alsa
 ```
 
 ## Notes
