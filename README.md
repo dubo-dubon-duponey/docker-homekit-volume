@@ -10,7 +10,7 @@ This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-al
     * [x] linux/amd64
     * [x] linux/arm64
     * [x] linux/arm/v7
-    * [x] linux/arm/v6
+    * [ ] linux/arm/v6 (should build, disabled by default)
  * hardened:
     * [x] image runs read-only
     * [x] image runs with no capabilities
@@ -38,7 +38,7 @@ docker run -d --rm \
     --net host \
     --cap-drop ALL \
     --read-only \
-    dubodubonduponey/homekit-alsa:v1
+    dubodubonduponey/homekit-alsa
 ```
 
 ## Notes
