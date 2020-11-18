@@ -10,7 +10,8 @@ This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-al
     * [x] linux/amd64
     * [x] linux/arm64
     * [x] linux/arm/v7
-    * [ ] linux/arm/v6 (should build, disabled by default)
+    * [x] linux/arm/v6
+
  * hardened:
     * [x] image runs read-only
     * [x] image runs with no capabilities
@@ -24,6 +25,11 @@ This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-al
     * [x] healthcheck
     * [x] log to stdout
     * [ ] ~~prometheus endpoint~~ not applicable
+
+ * unsupported / not enabled:
+    * [ ] linux/386: may build, not enabled by default
+    * [ ] linux/ppc64: alsa SwParams does not build
+    * [ ] linux/s390x: alsa SwParams does not build
 
 ## Run
 
