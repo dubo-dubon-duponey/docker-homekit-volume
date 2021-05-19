@@ -12,8 +12,8 @@ HOMEKIT_PIN=${HOMEKIT_PIN:-}
 PORT=${PORT:-10042}
 
 # Ensure the data folder is writable
-[ -w "/data" ] || {
-  >&2 printf "/data is not writable. Check your mount permissions.\n"
+[ -w /data ] || {
+  printf >&2 "/data is not writable. Check your mount permissions.\n"
   exit 1
 }
 
