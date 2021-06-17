@@ -6,28 +6,29 @@ This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-al
 
 ## Image features
 
- * multi-architecture:
-    * [x] linux/amd64
-    * [x] linux/arm64
-    * [x] linux/arm/v7
-    * [x] linux/arm/v6
-
- * hardened:
-    * [x] image runs read-only
-    * [x] image runs with no capabilities
-    * [x] process runs as a non-root user, disabled login, no shell
- * lightweight
-    * [x] based on our slim [Debian buster version](https://github.com/dubo-dubon-duponey/docker-debian)
-    * [x] simple entrypoint script
-    * [ ] multi-stage build with ~~no installed~~ dependencies for the runtime image:
-        * alsa-utils
- * observable
-    * [x] healthcheck
-    * [x] log to stdout
-    * [ ] ~~prometheus endpoint~~ not applicable
+* multi-architecture:
+  * [x] linux/amd64
+  * [x] linux/386
+  * [x] linux/arm64
+  * [x] linux/arm/v7
+  * [x] linux/arm/v6
+  * [ ] linux/ppc64
+  * [ ] linux/s390x
+* hardened:
+  * [x] image runs read-only
+  * [x] image runs with no capabilities (unless you want it on port 443)
+  * [x] process runs as a non-root user, disabled login, no shell
+* lightweight
+  * [x] based on our slim [Debian bullseye version (2021-06-01)](https://github.com/dubo-dubon-duponey/docker-debian)
+  * [x] simple entrypoint script
+  * [ ] multi-stage build with ~~no installed~~ dependencies for the runtime image:
+    * alsa-utils
+* observable
+  * [x] healthcheck
+  * [x] log to stdout
+  * [ ] ~~prometheus endpoint~~
 
  * unsupported / not enabled:
-    * [ ] linux/386: may build, not enabled by default
     * [ ] linux/ppc64: alsa SwParams does not build
     * [ ] linux/s390x: alsa SwParams does not build
 
