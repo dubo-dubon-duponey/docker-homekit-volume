@@ -19,7 +19,7 @@ RUN           git clone --recurse-submodules git://"$GIT_REPO" . && git checkout
 ARG           GOOS="$TARGETOS"
 ARG           GOARCH="$TARGETARCH"
 
-# hadolint ignore=DL4006
+# hadolint ignore=SC2046
 RUN           env GOARM="$(printf "%s" "$TARGETVARIANT" | tr -d v)" go build -trimpath $(if [ "$CGO_ENABLED" = 1 ]; then printf "%s" "-buildmode pie"; fi) \
                 -ldflags "$GO_LD_FLAGS" -tags "$GO_TAGS" -o /dist/boot/bin/"$GO_BUILD_OUTPUT" "$GO_BUILD_SOURCE"
 
@@ -42,7 +42,7 @@ RUN           git clone --recurse-submodules git://"$GIT_REPO" . && git checkout
 ARG           GOOS="$TARGETOS"
 ARG           GOARCH="$TARGETARCH"
 
-# hadolint ignore=DL4006
+# hadolint ignore=SC2046
 RUN           env GOARM="$(printf "%s" "$TARGETVARIANT" | tr -d v)" go build -trimpath $(if [ "$CGO_ENABLED" = 1 ]; then printf "%s" "-buildmode pie"; fi) \
                 -ldflags "$GO_LD_FLAGS" -tags "$GO_TAGS" -o /dist/boot/bin/"$GO_BUILD_OUTPUT" "$GO_BUILD_SOURCE"
 
@@ -66,7 +66,7 @@ RUN           --mount=type=secret,mode=0444,id=CA,dst=/etc/ssl/certs/ca-certific
               --mount=type=secret,id=APT_OPTIONS,dst=/etc/apt/apt.conf.d/dbdbdp.conf \
               apt-get update -qq && \
               apt-get install -qq --no-install-recommends \
-                alsa-utils=1.1.8-2        && \
+                alsa-utils=1.2.4-1        && \
               apt-get -qq autoremove      && \
               apt-get -qq clean           && \
               rm -rf /var/lib/apt/lists/* && \
