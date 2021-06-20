@@ -100,7 +100,16 @@ cakes: {
 				from: types.#Image & {#fromString: *"scratch" | string @tag(from_image, type=string)}
 			}
 			process: {
-				platforms: injector._platforms
+				platforms: [
+					types.#Platforms.#AMD64,
+					types.#Platforms.#ARM64,
+					types.#Platforms.#V7,
+					types.#Platforms.#V6,
+				]
+				// The go alsa lib does not support these platforms
+				//	types.#Platforms.#I386,
+				//	types.#Platforms.#PPC64LE,
+				//	types.#Platforms.#S390X,
 				args: {
 					FROM_IMAGE_BUILDER: "ghcr.io/dubo-dubon-duponey/base:builder-bullseye-2021-06-01"
 					FROM_IMAGE_RUNTIME: recipe.input.from.toString
