@@ -29,5 +29,7 @@ args=()
 [ ! "$HOMEKIT_PIN" ]            || args+=(--pin           "$HOMEKIT_PIN")
 [ ! "$PORT" ]                   || args+=(--port          "$PORT")
 
+# UUID and other registration details need to be preserved
+# otherwise the homekit registration will not recognize the device
 # Run once configured
 exec homekit-alsa register --data-path=/data/dubo-amp "${args[@]}" "$@"
