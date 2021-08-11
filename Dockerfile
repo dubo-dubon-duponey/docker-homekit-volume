@@ -95,6 +95,8 @@ RUN           RUNNING=true \
               STATIC=true \
                 dubo-check validate /dist/boot/bin/homekit-alsa
 
+RUN           setcap 'cap_net_bind_service+ep' /dist/boot/bin/homekit-alsa
+
 RUN           chmod 555 /dist/boot/bin/*; \
               epoch="$(date --date "$BUILD_CREATED" +%s)"; \
               find /dist/boot -newermt "@$epoch" -exec touch --no-dereference --date="@$epoch" '{}' +;
