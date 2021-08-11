@@ -1,6 +1,6 @@
 # What
 
-Docker image to control the volume of your raspberries.
+Docker image to expose a Homekit accessory controlling the volume of a host running Alsa - typically a raspberry pie.
 
 This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-alsa).
 
@@ -8,29 +8,27 @@ This is based on [HomeKit Alsa](https://github.com/dubo-dubon-duponey/homekit-al
 
 * multi-architecture:
   * [x] linux/amd64
-  * [x] linux/386
   * [x] linux/arm64
   * [x] linux/arm/v7
   * [x] linux/arm/v6
-  * [ ] linux/ppc64
-  * [ ] linux/s390x
 * hardened:
   * [x] image runs read-only
-  * [x] image runs with no capabilities (unless you want it on port 443)
+  * [x] image runs with no capabilities (unless you want it on a privileged port, in which case you need to grant NET_BIND_SERVICE)
   * [x] process runs as a non-root user, disabled login, no shell
+  * [x] binaries are compiled with PIE, bind now, stack protection, fortify source and read-only relocations (additionally stack clash protection on amd64)
 * lightweight
-  * [x] based on our slim [Debian bullseye version (2021-08-01)](https://github.com/dubo-dubon-duponey/docker-debian)
+  * [x] based on our slim [Debian bullseye version](https://github.com/dubo-dubon-duponey/docker-debian)
   * [x] simple entrypoint script
-  * [ ] multi-stage build with ~~no installed~~ dependencies for the runtime image:
-    * alsa-utils
+  * [x] multi-stage build with no installed dependencies for the runtime image
 * observable
   * [x] healthcheck
   * [x] log to stdout
   * [ ] ~~prometheus endpoint~~
 
- * unsupported / not enabled:
-    * [ ] linux/ppc64: alsa SwParams does not build
-    * [ ] linux/s390x: alsa SwParams does not build
+* unsupported / not enabled:
+  * [ ] linux/386: probably builds, disabled by default
+  * [ ] linux/ppc64: alsa SwParams does not build
+  * [ ] linux/s390x: alsa SwParams does not build
 
 ## Run
 
@@ -45,7 +43,7 @@ docker run -d --rm \
     --net host \
     --cap-drop ALL \
     --read-only \
-    dubodubonduponey/homekit-alsa
+    dubodubonduponey/homekit-volume
 ```
 
 ## Notes

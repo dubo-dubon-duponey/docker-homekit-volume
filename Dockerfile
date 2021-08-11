@@ -1,8 +1,9 @@
 ARG           FROM_REGISTRY=ghcr.io/dubo-dubon-duponey
 
 ARG           FROM_IMAGE_BUILDER=base:builder-bullseye-2021-08-01@sha256:f492d8441ddd82cad64889d44fa67cdf3f058ca44ab896de436575045a59604c
+ARG           FROM_IMAGE_AUDITOR=base:auditor-bullseye-2021-08-01@sha256:0f9017945c84b48c5e9906f3325409ab446964a9e97c65a1e1820f2dd3ff1b2c
+ARG           FROM_IMAGE_TOOLS=tools:linux-bullseye-2021-08-01@sha256:cec37383d167e274e3140f2b5db8cb80d0fb406538372f0c23ba09d97ee0b2a3
 ARG           FROM_IMAGE_RUNTIME=base:runtime-bullseye-2021-08-01@sha256:edc80b2c8fd94647f793cbcb7125c87e8db2424f16b9fd0b8e173af850932b48
-ARG           FROM_IMAGE_TOOLS=tools:linux-bullseye-2021-08-01@sha256:87ec12fe94a58ccc95610ee826f79b6e57bcfd91aaeb4b716b0548ab7b2408a7
 
 FROM          $FROM_REGISTRY/$FROM_IMAGE_TOOLS                                                                          AS builder-tools
 
@@ -11,9 +12,9 @@ FROM          $FROM_REGISTRY/$FROM_IMAGE_TOOLS                                  
 #######################
 FROM          --platform=$BUILDPLATFORM $FROM_REGISTRY/$FROM_IMAGE_BUILDER                                              AS fetcher-main
 
-ENV           GIT_REPO=github.com/dubo-dubon-duponey/homekit-alsa
-ENV           GIT_VERSION=6320344
-ENV           GIT_COMMIT=6320344bf748e1fb335a577177bb9115c12fa4ab
+ARG           GIT_REPO=github.com/dubo-dubon-duponey/homekit-alsa
+ARG           GIT_VERSION=6320344
+ARG           GIT_COMMIT=6320344bf748e1fb335a577177bb9115c12fa4ab
 
 ENV           WITH_BUILD_SOURCE="./cmd/homekit-alsa"
 ENV           WITH_BUILD_OUTPUT="homekit-alsa"
@@ -21,7 +22,7 @@ ENV           WITH_BUILD_OUTPUT="homekit-alsa"
 RUN           git clone --recurse-submodules git://"$GIT_REPO" .; git checkout "$GIT_COMMIT"
 RUN           --mount=type=secret,id=CA \
               --mount=type=secret,id=NETRC \
-              [[ "${GOFLAGS:-}" == *-mod=vendor* ]] || go mod download
+              [[ "${GOFLAGS:-}" == *-mod=vendor* ]] || go mod vendor
 
 #######################
 # Main builder
@@ -42,7 +43,7 @@ ENV           GOFLAGS="-trimpath ${ENABLE_PIE:+-buildmode=pie} ${GOFLAGS:-}"
 # - cannot compile fully statically with NETCGO
 RUN           export GOARM="$(printf "%s" "$TARGETVARIANT" | tr -d v)"; \
               [ "${CGO_ENABLED:-}" != 1 ] || { \
-                eval "$(dpkg-architecture -A "$(echo "$TARGETARCH$TARGETVARIANT" | sed -e "s/armv6/armel/" -e "s/armv7/armhf/" -e "s/ppc64le/ppc64el/" -e "s/386/i386/")")"; \
+                eval "$(dpkg-architecture -A "$(echo "$TARGETARCH$TARGETVARIANT" | sed -e "s/^armv6$/armel/" -e "s/^armv7$/armhf/" -e "s/^ppc64le$/ppc64el/" -e "s/^386$/i386/")")"; \
                 export PKG_CONFIG="${DEB_TARGET_GNU_TYPE}-pkg-config"; \
                 export AR="${DEB_TARGET_GNU_TYPE}-ar"; \
                 export CC="${DEB_TARGET_GNU_TYPE}-gcc"; \
@@ -59,28 +60,6 @@ RUN           export GOARM="$(printf "%s" "$TARGETVARIANT" | tr -d v)"; \
               }; \
               go build -ldflags "-s -w -v ${WITH_LDFLAGS:-}" -tags "${WITH_TAGS:-} net${WITH_CGO_NET:+c}go osusergo" -o /dist/boot/bin/"$WITH_BUILD_OUTPUT" "$WITH_BUILD_SOURCE"
 
-#######################
-# Builder assembly, XXX should be auditor
-#######################
-FROM          --platform=$BUILDPLATFORM $FROM_REGISTRY/$FROM_IMAGE_BUILDER                                              AS builder
-
-COPY          --from=builder-main   /dist/boot/bin           /dist/boot/bin
-
-# XXX shouldn't this be fronted over TLS?
-# COPY          --from=builder-tools  /boot/bin/caddy          /dist/boot/bin
-COPY          --from=builder-tools  /boot/bin/http-health    /dist/boot/bin
-
-RUN           chmod 555 /dist/boot/bin/*; \
-              epoch="$(date --date "$BUILD_CREATED" +%s)"; \
-              find /dist/boot -newermt "@$epoch" -exec touch --no-dereference --date="@$epoch" '{}' +;
-
-#######################
-# Running image
-#######################
-FROM          $FROM_REGISTRY/$FROM_IMAGE_RUNTIME
-
-USER          root
-
 RUN           --mount=type=secret,uid=100,id=CA \
               --mount=type=secret,uid=100,id=CERTIFICATE \
               --mount=type=secret,uid=100,id=KEY \
@@ -96,6 +75,34 @@ RUN           --mount=type=secret,uid=100,id=CA \
               rm -rf /var/lib/apt/lists/* && \
               rm -rf /tmp/*               && \
               rm -rf /var/tmp/*
+
+RUN           cp $(which amixer) /boot/bin
+
+#######################
+# Builder assembly
+#######################
+FROM          --platform=$BUILDPLATFORM $FROM_REGISTRY/$FROM_IMAGE_AUDITOR                                              AS builder
+
+COPY          --from=builder-main   /dist/boot/bin           /dist/boot/bin
+
+COPY          --from=builder-tools  /boot/bin/http-health    /dist/boot/bin
+
+RUN           RUNNING=true \
+              STATIC=true \
+                dubo-check validate /dist/boot/bin/http-health
+
+RUN           RUNNING=true \
+              STATIC=true \
+                dubo-check validate /dist/boot/bin/homekit-alsa
+
+RUN           chmod 555 /dist/boot/bin/*; \
+              epoch="$(date --date "$BUILD_CREATED" +%s)"; \
+              find /dist/boot -newermt "@$epoch" -exec touch --no-dereference --date="@$epoch" '{}' +;
+
+#######################
+# Running image
+#######################
+FROM          $FROM_REGISTRY/$FROM_IMAGE_RUNTIME
 
 USER          dubo-dubon-duponey
 
