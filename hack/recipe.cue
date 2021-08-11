@@ -31,7 +31,7 @@ cakes: {
 
 			output: {
 				images: {
-					names: [...string] | * ["homekit-alsa"],
+					names: [...string] | * ["homekit-volume"],
 					tags: [...string] | * ["latest"]
 				}
 			}
