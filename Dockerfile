@@ -77,18 +77,24 @@ RUN           --mount=type=secret,uid=100,id=CA \
               rm -rf /tmp/*               && \
               rm -rf /var/tmp/*
 
-RUN           cp $(which amixer) /dist/boot/bin
+RUN           mkdir -p /dist/boot/lib; \
+              cp $(which amixer) /dist/boot/bin; \
+              eval "$(dpkg-architecture -A "$(echo "$TARGETARCH$TARGETVARIANT" | sed -e "s/^armv6$/armel/" -e "s/^armv7$/armhf/" -e "s/^ppc64le$/ppc64el/" -e "s/^386$/i386/")")"; \
+              cp /usr/lib/"$DEB_TARGET_MULTIARCH"/libasound.so.2  /dist/boot/lib
+
 
 #######################
 # Builder assembly
 #######################
 FROM          --platform=$BUILDPLATFORM $FROM_REGISTRY/$FROM_IMAGE_AUDITOR                                              AS builder
 
-COPY          --from=builder-main   /dist/boot/bin           /dist/boot/bin
+COPY          --from=builder-main   /dist/boot            /dist/boot
+COPY          --from=builder-main   /usr/share/alsa       /dist/usr/share/alsa
 
-COPY          --from=builder-tools  /boot/bin/http-health    /dist/boot/bin
+COPY          --from=builder-tools  /boot/bin/http-health /dist/boot/bin
 
 # RUN           setcap 'cap_net_bind_service+ep' /dist/boot/bin/homekit-alsa
+RUN           patchelf --set-rpath '$ORIGIN/../lib'           /dist/boot/bin/amixer
 
 RUN           RUNNING=true \
               STATIC=true \
