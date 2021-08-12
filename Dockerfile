@@ -67,16 +67,17 @@ RUN           --mount=type=secret,uid=100,id=CA \
               --mount=type=secret,id=NETRC \
               --mount=type=secret,id=APT_SOURCES \
               --mount=type=secret,id=APT_CONFIG \
+              eval "$(dpkg-architecture -A "$(echo "$TARGETARCH$TARGETVARIANT" | sed -e "s/^armv6$/armel/" -e "s/^armv7$/armhf/" -e "s/^ppc64le$/ppc64el/" -e "s/^386$/i386/")")"; \
               apt-get update -qq && \
               apt-get install -qq --no-install-recommends \
-                alsa-utils=1.2.4-1        && \
+                alsa-utils:"$DEB_TARGET_ARCH"=1.2.4-1        && \
               apt-get -qq autoremove      && \
               apt-get -qq clean           && \
               rm -rf /var/lib/apt/lists/* && \
               rm -rf /tmp/*               && \
               rm -rf /var/tmp/*
 
-RUN           cp $(which amixer) /boot/bin
+RUN           cp $(which amixer) /dist/boot/bin
 
 #######################
 # Builder assembly
@@ -87,7 +88,7 @@ COPY          --from=builder-main   /dist/boot/bin           /dist/boot/bin
 
 COPY          --from=builder-tools  /boot/bin/http-health    /dist/boot/bin
 
-RUN           setcap 'cap_net_bind_service+ep' /dist/boot/bin/homekit-alsa
+# RUN           setcap 'cap_net_bind_service+ep' /dist/boot/bin/homekit-alsa
 
 RUN           RUNNING=true \
               STATIC=true \
