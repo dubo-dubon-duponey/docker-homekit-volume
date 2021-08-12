@@ -1,3 +1,5 @@
+<!> Archived - this is fine, but I no longer have a use for this and lost interest <!>
+
 # What
 
 Docker image to expose a Homekit accessory controlling the volume of a host running Alsa - typically a raspberry pie.
