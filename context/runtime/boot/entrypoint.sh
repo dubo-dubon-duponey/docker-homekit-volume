@@ -12,8 +12,8 @@ HOMEKIT_PIN=${HOMEKIT_PIN:-}
 PORT=${PORT:-10042}
 
 # Ensure the data folder is writable
-[ -w "/data" ] || {
-  >&2 printf "/data is not writable. Check your mount permissions.\n"
+[ -w /data ] || {
+  printf >&2 "/data is not writable. Check your mount permissions.\n"
   exit 1
 }
 
@@ -29,5 +29,7 @@ args=()
 [ ! "$HOMEKIT_PIN" ]            || args+=(--pin           "$HOMEKIT_PIN")
 [ ! "$PORT" ]                   || args+=(--port          "$PORT")
 
+# UUID and other registration details need to be preserved
+# otherwise the homekit registration will not recognize the device
 # Run once configured
 exec homekit-alsa register --data-path=/data/dubo-amp "${args[@]}" "$@"
